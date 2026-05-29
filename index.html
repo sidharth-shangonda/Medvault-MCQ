@@ -1,0 +1,1415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedVault PYQ</title>
+  <script src="assets/question-bank.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --ink: #172026;
+      --muted: #62717d;
+      --line: #dbe2e8;
+      --soft: #eef3f6;
+      --blue: #2367c9;
+      --green: #18805c;
+      --red: #c93a3a;
+      --amber: #a96400;
+      --teal: #0e7c86;
+      --shadow: 0 10px 24px rgba(25, 35, 45, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      letter-spacing: 0;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    img { max-width: 100%; display: block; }
+    .app { min-height: 100vh; padding-bottom: 84px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(246, 247, 249, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 16px 10px;
+      display: grid;
+      gap: 10px;
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #102a3a;
+      color: #fff;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.05;
+    }
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 58vw;
+    }
+    .quick-stats {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .quick-stats::-webkit-scrollbar { display: none; }
+    .stat-pill {
+      min-width: max-content;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .stat-pill strong { color: var(--ink); }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 8px 12px;
+      min-width: max-content;
+    }
+    .tab.active {
+      background: #102a3a;
+      color: #fff;
+      border-color: #102a3a;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .panel.pad { padding: 14px; }
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .metric {
+      display: grid;
+      gap: 4px;
+      padding: 14px;
+      min-height: 88px;
+    }
+    .metric strong {
+      font-size: 26px;
+      line-height: 1;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .filters {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      align-items: end;
+    }
+    .field {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+    .field label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 9px 10px;
+      min-height: 40px;
+    }
+    .segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .segmented button,
+    .btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 9px 12px;
+      min-height: 40px;
+    }
+    .segmented button.active,
+    .btn.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+    .btn.dark {
+      background: #102a3a;
+      border-color: #102a3a;
+      color: #fff;
+    }
+    .btn.ghost { background: transparent; }
+    .btn.danger {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+    .btn.good {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .card-list {
+      display: grid;
+      gap: 10px;
+    }
+    .q-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 9px;
+    }
+    .q-card.compact { gap: 6px; }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 7px;
+      padding: 4px 7px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 12px;
+      min-height: 24px;
+    }
+    .badge.blue { background: #e7f0ff; color: #1f5caf; }
+    .badge.green { background: #e4f6ef; color: var(--green); }
+    .badge.red { background: #ffe8e8; color: var(--red); }
+    .badge.amber { background: #fff1d8; color: var(--amber); }
+    .question-text {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.42;
+    }
+    .option-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+    .option .letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .option.selected {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(35, 103, 201, .12);
+    }
+    .option.correct {
+      border-color: var(--green);
+      background: #f2fbf7;
+    }
+    .option.wrong {
+      border-color: var(--red);
+      background: #fff5f5;
+    }
+    .quiz-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 290px;
+      gap: 12px;
+      align-items: start;
+    }
+    .quiz-main {
+      display: grid;
+      gap: 12px;
+    }
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .nav-chip {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      min-height: 34px;
+      color: var(--muted);
+    }
+    .nav-chip.current {
+      border-color: #102a3a;
+      color: #102a3a;
+      font-weight: 700;
+    }
+    .nav-chip.done {
+      background: #e4f6ef;
+      color: var(--green);
+      border-color: #bee8d5;
+    }
+    .explanation {
+      border-left: 4px solid var(--teal);
+      background: #eefafa;
+      border-radius: 8px;
+      padding: 12px;
+      color: #17343a;
+    }
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px;
+    }
+    .media-grid img {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .progress-row {
+      display: grid;
+      gap: 5px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .bar {
+      height: 8px;
+      border-radius: 99px;
+      background: var(--soft);
+      overflow: hidden;
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--green);
+      width: 0;
+    }
+    .result-score {
+      display: grid;
+      place-items: center;
+      width: 148px;
+      height: 148px;
+      border-radius: 50%;
+      margin: 6px auto 14px;
+      background: conic-gradient(var(--green) var(--pct), #e4e9ee 0);
+    }
+    .result-score div {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 1px solid var(--line);
+    }
+    .result-score strong {
+      font-size: 28px;
+      line-height: 1;
+    }
+    .muted { color: var(--muted); }
+    .empty {
+      padding: 28px 16px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .notice {
+      border: 1px solid #f1d59c;
+      background: #fff7e8;
+      color: #614000;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .bottom-actions {
+      position: sticky;
+      bottom: 0;
+      z-index: 15;
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px;
+      margin: 0 -16px -16px;
+      background: rgba(246, 247, 249, .95);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .bottom-actions .btn { flex: 1; }
+    .search-box {
+      display: grid;
+      gap: 8px;
+    }
+    .search-box input {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-height: 44px;
+      padding: 10px 12px;
+      width: 100%;
+    }
+    .small { font-size: 12px; }
+    .hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      .filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .quiz-shell { grid-template-columns: 1fr; }
+      .quiz-side { order: -1; }
+      .nav-grid { grid-template-columns: repeat(10, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      body { font-size: 14px; }
+      .grid.two,
+      .grid.three,
+      .filters { grid-template-columns: 1fr; }
+      main { padding: 12px; }
+      .topbar-inner { padding: 12px; }
+      .brand p { max-width: 72vw; }
+      .metric strong { font-size: 23px; }
+      .question-text { font-size: 16px; }
+      .option { grid-template-columns: 24px 1fr; padding: 11px; }
+      .option .letter { width: 24px; height: 24px; }
+      .nav-grid { grid-template-columns: repeat(6, 1fr); }
+      .toolbar { align-items: stretch; }
+      .toolbar .btn { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app"></div>
+  <script>
+    const BANK = Array.isArray(window.QUESTION_BANK) ? window.QUESTION_BANK : [];
+    const META = window.QUESTION_META || {};
+    const STORE_KEY = "medvault_pyq_progress_v1";
+    const MAX_TEST_QUESTIONS = 30;
+    const REVIEW_INTERVALS = [1, 3, 7, 15, 30];
+    const LETTERS = ["A", "B", "C", "D", "E"];
+    const root = document.getElementById("app");
+    let timerHandle = null;
+
+    const app = {
+      view: "dashboard",
+      mode: "practice",
+      filters: {
+        subject: "",
+        chapter: "",
+        exam: "",
+        year: "",
+        difficulty: "",
+        repeated: "0",
+        special: ""
+      },
+      count: 20,
+      search: "",
+      reviewFilter: "all",
+      session: null,
+      result: null
+    };
+
+    const progress = loadProgress();
+    const byId = new Map(BANK.map(q => [q.id, q]));
+
+    function loadProgress() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+        return {
+          questions: parsed.questions || {},
+          sessions: parsed.sessions || [],
+          streak: parsed.streak || { lastDay: "", count: 0 }
+        };
+      } catch {
+        return { questions: {}, sessions: [], streak: { lastDay: "", count: 0 } };
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem(STORE_KEY, JSON.stringify(progress));
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function uniq(values) {
+      return [...new Set(values.filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b)));
+    }
+
+    function shuffle(values) {
+      const copy = values.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function todayKey() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getProgress(id) {
+      if (!progress.questions[id]) {
+        progress.questions[id] = {
+          attempts: 0,
+          correct: 0,
+          wrong: 0,
+          skipped: 0,
+          totalTime: 0,
+          bookmarked: false,
+          dueAt: 0,
+          intervalIndex: 0,
+          lastConfidence: "",
+          lastSelected: null,
+          lastCorrect: null
+        };
+      }
+      return progress.questions[id];
+    }
+
+    function calcStats() {
+      let attempted = 0;
+      let correct = 0;
+      let wrong = 0;
+      let skipped = 0;
+      let due = 0;
+      let bookmarked = 0;
+      const now = Date.now();
+      for (const q of BANK) {
+        const p = progress.questions[q.id];
+        if (!p) continue;
+        if (p.attempts) attempted += 1;
+        correct += p.correct || 0;
+        wrong += p.wrong || 0;
+        skipped += p.skipped || 0;
+        if (p.dueAt && p.dueAt <= now) due += 1;
+        if (p.bookmarked) bookmarked += 1;
+      }
+      const denominator = correct + wrong + skipped;
+      const accuracy = denominator ? Math.round((correct / denominator) * 100) : 0;
+      return { attempted, correct, wrong, due, bookmarked, accuracy };
+    }
+
+    function chaptersForSubject(subject) {
+      const source = subject ? BANK.filter(q => q.subject === subject) : BANK;
+      return uniq(source.map(q => q.chapter));
+    }
+
+    function applyFilters(source = BANK) {
+      const f = app.filters;
+      const now = Date.now();
+      return source.filter(q => {
+        if (f.subject && q.subject !== f.subject) return false;
+        if (f.chapter && q.chapter !== f.chapter) return false;
+        if (f.exam && q.exam !== f.exam) return false;
+        if (f.year && String(q.year) !== String(f.year)) return false;
+        if (f.difficulty && q.difficulty !== f.difficulty) return false;
+        if (Number(f.repeated || 0) && (q.repeatedCount || 1) < Number(f.repeated)) return false;
+        const p = progress.questions[q.id];
+        if (f.special === "bookmarked" && !p?.bookmarked) return false;
+        if (f.special === "mistakes" && !(p?.wrong > 0)) return false;
+        if (f.special === "due" && !(p?.dueAt && p.dueAt <= now)) return false;
+        if (f.special === "image" && !(q.images && q.images.length)) return false;
+        return true;
+      });
+    }
+
+    function poolForMode() {
+      const base = applyFilters();
+      const now = Date.now();
+      if (app.mode === "rapid") return base.filter(q => q.highYield || (q.repeatedCount || 1) >= 2);
+      if (app.mode === "weak") {
+        return base.filter(q => {
+          const p = progress.questions[q.id];
+          return p && (p.wrong > 0 || (p.attempts >= 2 && p.correct / p.attempts < .65));
+        });
+      }
+      if (app.mode === "mistakes") return base.filter(q => (progress.questions[q.id]?.wrong || 0) > 0);
+      if (app.mode === "due") return base.filter(q => {
+        const p = progress.questions[q.id];
+        return p?.dueAt && p.dueAt <= now;
+      });
+      return base;
+    }
+
+    function setView(view) {
+      app.view = view;
+      app.result = null;
+      render();
+    }
+
+    function setMode(mode) {
+      app.mode = mode;
+      render();
+    }
+
+    function startQuiz() {
+      const pool = poolForMode();
+      const count = Math.min(MAX_TEST_QUESTIONS, Math.max(1, Number(app.count || 20)));
+      if (!pool.length) {
+        alert("No questions match the current selection.");
+        return;
+      }
+      const selected = shuffle(pool).slice(0, count);
+      app.session = {
+        ids: selected.map(q => q.id),
+        index: 0,
+        mode: app.mode,
+        startedAt: Date.now(),
+        currentStarted: Date.now(),
+        answers: {},
+        finished: false
+      };
+      app.result = null;
+      app.view = "quiz";
+      render();
+    }
+
+    function currentQuestion() {
+      if (!app.session) return null;
+      return byId.get(app.session.ids[app.session.index]) || null;
+    }
+
+    function currentAnswer(id) {
+      if (!app.session.answers[id]) {
+        app.session.answers[id] = { selected: null, confidence: "unsure", time: 0, marked: false };
+      }
+      return app.session.answers[id];
+    }
+
+    function recordElapsed() {
+      if (!app.session) return;
+      const q = currentQuestion();
+      if (!q) return;
+      const answer = currentAnswer(q.id);
+      answer.time += Math.max(0, Date.now() - app.session.currentStarted);
+      app.session.currentStarted = Date.now();
+    }
+
+    function selectOption(index) {
+      const q = currentQuestion();
+      if (!q) return;
+      const answer = currentAnswer(q.id);
+      if (answer.selected === null) recordElapsed();
+      answer.selected = index;
+      render();
+    }
+
+    function setConfidence(value) {
+      const q = currentQuestion();
+      if (!q) return;
+      currentAnswer(q.id).confidence = value;
+      render();
+    }
+
+    function jumpTo(index) {
+      if (!app.session) return;
+      recordElapsed();
+      app.session.index = Math.max(0, Math.min(app.session.ids.length - 1, index));
+      app.session.currentStarted = Date.now();
+      render();
+    }
+
+    function moveQuestion(delta) {
+      if (!app.session) return;
+      jumpTo(app.session.index + delta);
+    }
+
+    function clearAnswer() {
+      const q = currentQuestion();
+      if (!q || !app.session) return;
+      app.session.answers[q.id] = { selected: null, confidence: "unsure", time: 0, marked: false };
+      render();
+    }
+
+    function toggleBookmark(id) {
+      const p = getProgress(id);
+      p.bookmarked = !p.bookmarked;
+      saveProgress();
+      render();
+    }
+
+    function finishQuiz() {
+      if (!app.session) return;
+      recordElapsed();
+      const rows = app.session.ids.map(id => {
+        const q = byId.get(id);
+        const a = app.session.answers[id] || { selected: null, confidence: "unsure", time: 0 };
+        const skipped = a.selected === null || a.selected === undefined;
+        const isCorrect = !skipped && a.selected === q.correct;
+        return { q, answer: a, skipped, isCorrect };
+      });
+      let correct = 0;
+      let wrong = 0;
+      let skipped = 0;
+      const now = Date.now();
+      const day = todayKey();
+      if (progress.streak.lastDay !== day) {
+        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        progress.streak.count = progress.streak.lastDay === yesterday ? (progress.streak.count || 0) + 1 : 1;
+        progress.streak.lastDay = day;
+      }
+      for (const row of rows) {
+        const p = getProgress(row.q.id);
+        p.attempts += 1;
+        p.totalTime += row.answer.time || 0;
+        p.lastConfidence = row.answer.confidence || "unsure";
+        p.lastSelected = row.answer.selected;
+        p.lastCorrect = row.isCorrect;
+        if (row.skipped) {
+          skipped += 1;
+          p.skipped += 1;
+          continue;
+        }
+        if (row.isCorrect) {
+          correct += 1;
+          p.correct += 1;
+          const nextIndex = Math.min(REVIEW_INTERVALS.length - 1, (p.intervalIndex || 0) + 1);
+          p.intervalIndex = nextIndex;
+          p.dueAt = now + REVIEW_INTERVALS[nextIndex] * 86400000;
+        } else {
+          wrong += 1;
+          p.wrong += 1;
+          p.intervalIndex = 0;
+          p.dueAt = now + REVIEW_INTERVALS[0] * 86400000;
+        }
+      }
+      const accuracy = rows.length ? Math.round((correct / rows.length) * 100) : 0;
+      const summary = {
+        date: new Date().toISOString(),
+        mode: app.session.mode,
+        count: rows.length,
+        correct,
+        wrong,
+        skipped,
+        accuracy,
+        ids: app.session.ids
+      };
+      progress.sessions.unshift(summary);
+      progress.sessions = progress.sessions.slice(0, 20);
+      saveProgress();
+      app.result = { ...summary, rows };
+      app.session.finished = true;
+      app.view = "result";
+      render();
+    }
+
+    function formatTime(ms) {
+      const sec = Math.round((ms || 0) / 1000);
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${m}:${String(s).padStart(2, "0")}`;
+    }
+
+    function renderShell(content) {
+      const stats = calcStats();
+      const nav = [
+        ["dashboard", "Dashboard"],
+        ["bank", "Bank"],
+        ["setup", "Quiz"],
+        ["review", "Review"],
+        ["search", "Search"]
+      ];
+      root.innerHTML = `
+        <div class="topbar">
+          <div class="topbar-inner">
+            <div class="brand-row">
+              <div class="brand">
+                <div class="mark">MV</div>
+                <div>
+                  <h1>MedVault PYQ</h1>
+                  <p>${escapeHtml(META.totalQuestions || BANK.length)} structured PYQs across ${escapeHtml((META.subjects || []).length)} subjects</p>
+                </div>
+              </div>
+              <button class="btn ghost" data-action="set-view" data-view="setup">Start</button>
+            </div>
+            <div class="quick-stats">
+              <div class="stat-pill"><strong>${stats.attempted}</strong> attempted</div>
+              <div class="stat-pill"><strong>${stats.accuracy}%</strong> accuracy</div>
+              <div class="stat-pill"><strong>${stats.due}</strong> due</div>
+              <div class="stat-pill"><strong>${stats.bookmarked}</strong> bookmarks</div>
+              <div class="stat-pill"><strong>${progress.streak.count || 0}</strong> day streak</div>
+            </div>
+            <nav class="tabs">
+              ${nav.map(([view, label]) => `<button class="tab ${app.view === view ? "active" : ""}" data-action="set-view" data-view="${view}">${label}</button>`).join("")}
+            </nav>
+          </div>
+        </div>
+        <main>${content}</main>
+      `;
+      bindTimer();
+    }
+
+    function renderFilters() {
+      const subjects = META.subjects || uniq(BANK.map(q => q.subject));
+      const chapters = chaptersForSubject(app.filters.subject);
+      const exams = META.exams || uniq(BANK.map(q => q.exam));
+      const years = META.years || uniq(BANK.map(q => q.year));
+      const option = (value, label, selected) => `<option value="${escapeHtml(value)}" ${String(value) === String(selected) ? "selected" : ""}>${escapeHtml(label)}</option>`;
+      return `
+        <div class="panel pad">
+          <div class="filters">
+            <div class="field">
+              <label>Subject</label>
+              <select data-filter="subject">
+                ${option("", "All subjects", app.filters.subject)}
+                ${subjects.map(s => option(s, s, app.filters.subject)).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label>Chapter</label>
+              <select data-filter="chapter">
+                ${option("", "All chapters", app.filters.chapter)}
+                ${chapters.map(c => option(c, c, app.filters.chapter)).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label>Exam</label>
+              <select data-filter="exam">
+                ${option("", "All exams", app.filters.exam)}
+                ${exams.map(e => option(e, e, app.filters.exam)).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label>Year</label>
+              <select data-filter="year">
+                ${option("", "All years", app.filters.year)}
+                ${years.map(y => option(y, y, app.filters.year)).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label>Difficulty</label>
+              <select data-filter="difficulty">
+                ${option("", "Any", app.filters.difficulty)}
+                ${["Easy", "Moderate", "Difficult"].map(d => option(d, d, app.filters.difficulty)).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label>Special</label>
+              <select data-filter="special">
+                ${option("", "All questions", app.filters.special)}
+                ${option("bookmarked", "Bookmarked", app.filters.special)}
+                ${option("mistakes", "Wrong before", app.filters.special)}
+                ${option("due", "Due review", app.filters.special)}
+                ${option("image", "Image-based", app.filters.special)}
+              </select>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const stats = calcStats();
+      const subjects = META.subjects || uniq(BANK.map(q => q.subject));
+      const subjectRows = subjects.map(subject => {
+        const qs = BANK.filter(q => q.subject === subject);
+        let correct = 0, wrong = 0, attempted = 0;
+        for (const q of qs) {
+          const p = progress.questions[q.id];
+          if (!p) continue;
+          if (p.attempts) attempted += 1;
+          correct += p.correct || 0;
+          wrong += p.wrong || 0;
+        }
+        const acc = correct + wrong ? Math.round(correct / (correct + wrong) * 100) : 0;
+        return { subject, total: qs.length, attempted, acc };
+      }).sort((a, b) => a.acc - b.acc || b.total - a.total);
+
+      const recent = progress.sessions.slice(0, 5);
+      const notice = META.repairNote ? `<div class="notice">Text bank is complete. Image media can be regenerated when the source PDF is placed back in the workspace.</div>` : "";
+      renderShell(`
+        <div class="grid">
+          ${notice}
+          <div class="grid three">
+            <div class="panel metric"><strong>${BANK.length}</strong><span>Total PYQs</span></div>
+            <div class="panel metric"><strong>${stats.attempted}</strong><span>Questions attempted</span></div>
+            <div class="panel metric"><strong>${stats.accuracy}%</strong><span>Overall accuracy</span></div>
+          </div>
+          <div class="grid two">
+            <section class="panel pad">
+              <h2 class="section-title">Subject Performance</h2>
+              <div class="grid">
+                ${subjectRows.slice(0, 12).map(row => `
+                  <div class="progress-row">
+                    <div class="progress-label"><span>${escapeHtml(row.subject)} (${row.attempted}/${row.total})</span><strong>${row.acc}%</strong></div>
+                    <div class="bar"><span style="width:${row.acc}%"></span></div>
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+            <section class="panel pad">
+              <div class="toolbar">
+                <h2 class="section-title">Quick Modes</h2>
+                <button class="btn" data-action="set-view" data-view="setup">Configure</button>
+              </div>
+              <div class="grid">
+                ${quickModeButton("practice", "Practice", "Immediate explanations")}
+                ${quickModeButton("rapid", "Rapid Revision", "Repeated and high-yield PYQs")}
+                ${quickModeButton("weak", "Weak Topics", "Questions missed before")}
+                ${quickModeButton("due", "Due Review", `${stats.due} scheduled questions`)}
+              </div>
+            </section>
+          </div>
+          <section class="panel pad">
+            <h2 class="section-title">Recent Sessions</h2>
+            ${recent.length ? `<div class="card-list">${recent.map(s => `
+              <div class="q-card compact">
+                <div class="toolbar">
+                  <strong>${escapeHtml(titleCase(s.mode))}</strong>
+                  <span class="badge ${s.accuracy >= 70 ? "green" : s.accuracy >= 50 ? "amber" : "red"}">${s.accuracy}%</span>
+                </div>
+                <div class="muted small">${new Date(s.date).toLocaleString()} - ${s.correct} correct, ${s.wrong} wrong, ${s.skipped} skipped</div>
+              </div>
+            `).join("")}</div>` : `<div class="empty">No sessions yet.</div>`}
+          </section>
+        </div>
+      `);
+    }
+
+    function quickModeButton(mode, title, text) {
+      return `
+        <button class="q-card compact" data-action="quick-mode" data-mode="${mode}">
+          <div class="toolbar"><strong>${title}</strong><span class="badge blue">30 max</span></div>
+          <span class="muted small">${text}</span>
+        </button>
+      `;
+    }
+
+    function titleCase(value) {
+      return String(value || "").replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function renderSetup() {
+      const pool = poolForMode();
+      renderShell(`
+        <div class="grid">
+          ${renderFilters()}
+          <section class="panel pad">
+            <div class="toolbar">
+              <h2 class="section-title">Test Mode</h2>
+              <span class="badge blue">${pool.length} available</span>
+            </div>
+            <div class="segmented" style="margin-bottom:12px">
+              ${["practice", "exam", "rapid", "weak", "mistakes", "due"].map(mode => `
+                <button class="${app.mode === mode ? "active" : ""}" data-action="set-mode" data-mode="${mode}">${titleCase(mode)}</button>
+              `).join("")}
+            </div>
+            <div class="grid two">
+              <div class="field">
+                <label>Question count</label>
+                <select data-action="count-select">
+                  ${[5, 10, 20, 30].map(n => `<option value="${n}" ${Number(app.count) === n ? "selected" : ""}>${n} questions</option>`).join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label>Repeated at least</label>
+                <select data-filter="repeated">
+                  ${[0, 2, 3, 5].map(n => `<option value="${n}" ${Number(app.filters.repeated) === n ? "selected" : ""}>${n ? n + "+ repeats" : "Any frequency"}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+            <div class="bottom-actions">
+              <button class="btn primary" data-action="start-quiz" ${pool.length ? "" : "disabled"}>Start Test</button>
+              <button class="btn" data-action="set-view" data-view="bank">Browse Bank</button>
+            </div>
+          </section>
+        </div>
+      `);
+    }
+
+    function questionBadges(q) {
+      return `
+        <div class="badges">
+          <span class="badge blue">${escapeHtml(q.subject)}</span>
+          <span class="badge">${escapeHtml(q.chapter)}</span>
+          <span class="badge">${escapeHtml(q.exam)} ${escapeHtml(q.year)}</span>
+          <span class="badge ${q.difficulty === "Difficult" ? "red" : q.difficulty === "Moderate" ? "amber" : "green"}">${escapeHtml(q.difficulty)}</span>
+          ${(q.repeatedCount || 1) > 1 ? `<span class="badge green">Repeated ${q.repeatedCount}x</span>` : ""}
+          ${q.highYield ? `<span class="badge amber">High-yield</span>` : ""}
+        </div>
+      `;
+    }
+
+    function renderBank() {
+      const filtered = applyFilters();
+      renderShell(`
+        <div class="grid">
+          ${renderFilters()}
+          <section class="panel pad">
+            <div class="toolbar">
+              <h2 class="section-title">Question Bank</h2>
+              <span class="badge blue">${filtered.length} questions</span>
+            </div>
+            ${filtered.length ? `<div class="card-list">${filtered.slice(0, 100).map(q => renderQuestionCard(q)).join("")}</div>` : `<div class="empty">No questions match these filters.</div>`}
+            ${filtered.length > 100 ? `<p class="muted small">Showing first 100. Narrow filters or use search for more.</p>` : ""}
+          </section>
+        </div>
+      `);
+    }
+
+    function renderQuestionCard(q) {
+      const p = progress.questions[q.id] || {};
+      const acc = p.attempts ? Math.round((p.correct || 0) / p.attempts * 100) : null;
+      return `
+        <article class="q-card">
+          ${questionBadges(q)}
+          <p>${escapeHtml(q.question)}</p>
+          <div class="toolbar">
+            <span class="muted small">Q${q.questionNo} - Pages ${(q.sourcePages || []).join(", ") || "n/a"}${acc !== null ? ` - ${acc}% personal accuracy` : ""}</span>
+            <div>
+              <button class="btn" data-action="single-question" data-id="${q.id}">Practice</button>
+              <button class="btn ${p.bookmarked ? "good" : ""}" data-action="bookmark" data-id="${q.id}">${p.bookmarked ? "Saved" : "Save"}</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderQuiz() {
+      if (!app.session || app.session.finished) {
+        renderSetup();
+        return;
+      }
+      const q = currentQuestion();
+      const answer = currentAnswer(q.id);
+      const reveal = app.session.mode !== "exam" && answer.selected !== null;
+      const progressText = `${app.session.index + 1} / ${app.session.ids.length}`;
+      renderShell(`
+        <div class="quiz-shell">
+          <section class="quiz-main">
+            <div class="panel pad">
+              <div class="toolbar">
+                <span class="badge blue">${progressText}</span>
+                <span class="badge" id="quizTimer">${timerText()}</span>
+                <button class="btn ${getProgress(q.id).bookmarked ? "good" : ""}" data-action="bookmark" data-id="${q.id}">${getProgress(q.id).bookmarked ? "Bookmarked" : "Bookmark"}</button>
+              </div>
+            </div>
+            <article class="panel pad">
+              ${questionBadges(q)}
+              <p class="question-text">${escapeHtml(q.question)}</p>
+              ${renderImages(q.images || [])}
+              <div class="option-list">
+                ${q.options.map((option, index) => {
+                  const cls = optionClass(index, answer, q, reveal);
+                  return `<button class="option ${cls}" data-action="answer" data-index="${index}">
+                    <span class="letter">${LETTERS[index]}</span>
+                    <span>${escapeHtml(option)}</span>
+                  </button>`;
+                }).join("")}
+              </div>
+              <div style="margin-top:12px">
+                <div class="segmented">
+                  ${["guessed", "unsure", "confident"].map(c => `<button class="${answer.confidence === c ? "active" : ""}" data-action="confidence" data-value="${c}">${titleCase(c)}</button>`).join("")}
+                </div>
+              </div>
+              ${reveal ? renderExplanation(q, answer) : ""}
+            </article>
+            <div class="bottom-actions">
+              <button class="btn" data-action="prev" ${app.session.index === 0 ? "disabled" : ""}>Prev</button>
+              <button class="btn" data-action="clear-answer">Clear</button>
+              ${app.session.index === app.session.ids.length - 1 ? `<button class="btn primary" data-action="finish">Finish</button>` : `<button class="btn primary" data-action="next">Next</button>`}
+            </div>
+          </section>
+          <aside class="quiz-side panel pad">
+            <h2 class="section-title">Navigator</h2>
+            <div class="nav-grid">
+              ${app.session.ids.map((id, index) => {
+                const a = app.session.answers[id];
+                const done = a && a.selected !== null && a.selected !== undefined;
+                return `<button class="nav-chip ${index === app.session.index ? "current" : ""} ${done ? "done" : ""}" data-action="jump" data-index="${index}">${index + 1}</button>`;
+              }).join("")}
+            </div>
+            <div style="height:12px"></div>
+            <button class="btn danger" style="width:100%" data-action="finish">End Test</button>
+          </aside>
+        </div>
+      `);
+    }
+
+    function optionClass(index, answer, q, reveal) {
+      const selected = answer.selected === index;
+      if (!reveal) return selected ? "selected" : "";
+      if (index === q.correct) return "correct";
+      if (selected && selected !== q.correct) return "wrong";
+      return "";
+    }
+
+    function renderImages(images) {
+      if (!images.length) return "";
+      return `<div class="media-grid">${images.map(img => `<img src="${escapeHtml(img.src)}" alt="Question image from page ${escapeHtml(img.page)}">`).join("")}</div>`;
+    }
+
+    function renderExplanation(q, answer) {
+      const correctText = q.options[q.correct] || "See explanation";
+      const userText = answer.selected === null ? "Skipped" : q.options[answer.selected];
+      return `
+        <div class="explanation" style="margin-top:12px">
+          <strong>Correct answer: ${LETTERS[q.correct]} - ${escapeHtml(correctText)}</strong>
+          <p class="small"><strong>Your answer:</strong> ${escapeHtml(userText || "Skipped")} | <strong>Confidence:</strong> ${escapeHtml(answer.confidence)}</p>
+          <p>${escapeHtml(q.explanation || "Explanation not available.")}</p>
+          <p class="muted small">Source: ${escapeHtml(q.paper)}, Q${q.questionNo}, pages ${(q.sourcePages || []).join(", ")}</p>
+        </div>
+      `;
+    }
+
+    function timerText() {
+      if (!app.session) return "0:00";
+      if (app.session.mode !== "exam") return "Untimed";
+      const allowed = app.session.ids.length * 180000;
+      const left = Math.max(0, allowed - (Date.now() - app.session.startedAt));
+      if (left <= 0) {
+        setTimeout(finishQuiz, 0);
+      }
+      return `Time left ${formatTime(left)}`;
+    }
+
+    function bindTimer() {
+      if (timerHandle) clearInterval(timerHandle);
+      if (!app.session || app.view !== "quiz" || app.session.mode !== "exam") return;
+      timerHandle = setInterval(() => {
+        const el = document.getElementById("quizTimer");
+        if (el) el.textContent = timerText();
+      }, 1000);
+    }
+
+    function renderResult() {
+      const result = app.result;
+      if (!result) {
+        renderDashboard();
+        return;
+      }
+      const pct = `${Math.max(0, Math.min(100, result.accuracy))}%`;
+      const chapterRows = chapterResultRows(result.rows);
+      renderShell(`
+        <div class="grid">
+          <section class="panel pad">
+            <div class="result-score" style="--pct:${pct}">
+              <div><strong>${result.accuracy}%</strong><span class="muted small">Score</span></div>
+            </div>
+            <div class="grid three">
+              <div class="metric panel"><strong>${result.correct}</strong><span>Correct</span></div>
+              <div class="metric panel"><strong>${result.wrong}</strong><span>Wrong</span></div>
+              <div class="metric panel"><strong>${result.skipped}</strong><span>Skipped</span></div>
+            </div>
+          </section>
+          <section class="panel pad">
+            <h2 class="section-title">Chapter Accuracy</h2>
+            <div class="grid">
+              ${chapterRows.map(row => `
+                <div class="progress-row">
+                  <div class="progress-label"><span>${escapeHtml(row.name)}</span><strong>${row.acc}%</strong></div>
+                  <div class="bar"><span style="width:${row.acc}%"></span></div>
+                </div>
+              `).join("")}
+            </div>
+          </section>
+          <section class="panel pad">
+            <div class="toolbar">
+              <h2 class="section-title">Review</h2>
+              <div class="segmented">
+                ${["all", "wrong", "skipped", "bookmarked"].map(f => `<button class="${app.reviewFilter === f ? "active" : ""}" data-action="review-filter" data-value="${f}">${titleCase(f)}</button>`).join("")}
+              </div>
+            </div>
+            <div class="card-list">
+              ${result.rows.filter(row => reviewMatch(row)).map(row => renderReviewCard(row.q, row.answer, row.isCorrect, row.skipped)).join("") || `<div class="empty">Nothing in this review bucket.</div>`}
+            </div>
+          </section>
+        </div>
+      `);
+    }
+
+    function chapterResultRows(rows) {
+      const map = new Map();
+      for (const row of rows) {
+        const key = `${row.q.subject} - ${row.q.chapter}`;
+        if (!map.has(key)) map.set(key, { name: key, total: 0, correct: 0 });
+        const item = map.get(key);
+        item.total += 1;
+        if (row.isCorrect) item.correct += 1;
+      }
+      return [...map.values()].map(row => ({ ...row, acc: Math.round(row.correct / row.total * 100) })).sort((a, b) => a.acc - b.acc);
+    }
+
+    function reviewMatch(row) {
+      if (app.reviewFilter === "wrong") return !row.skipped && !row.isCorrect;
+      if (app.reviewFilter === "skipped") return row.skipped;
+      if (app.reviewFilter === "bookmarked") return !!progress.questions[row.q.id]?.bookmarked;
+      return true;
+    }
+
+    function renderReviewCard(q, answer, isCorrect, skipped) {
+      return `
+        <article class="q-card">
+          ${questionBadges(q)}
+          <p><strong>${escapeHtml(q.question)}</strong></p>
+          <div class="badges">
+            <span class="badge ${isCorrect ? "green" : skipped ? "amber" : "red"}">${isCorrect ? "Correct" : skipped ? "Skipped" : "Wrong"}</span>
+            <span class="badge">Your: ${skipped ? "Skipped" : LETTERS[answer.selected]}</span>
+            <span class="badge green">Answer: ${LETTERS[q.correct]}</span>
+          </div>
+          ${renderExplanation(q, answer)}
+          <div class="toolbar">
+            <button class="btn" data-action="single-question" data-id="${q.id}">Retry</button>
+            <button class="btn ${progress.questions[q.id]?.bookmarked ? "good" : ""}" data-action="bookmark" data-id="${q.id}">${progress.questions[q.id]?.bookmarked ? "Saved" : "Save"}</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderReview() {
+      const now = Date.now();
+      const rows = BANK.map(q => ({ q, p: progress.questions[q.id] })).filter(({ p }) => p && (p.wrong > 0 || p.bookmarked || (p.dueAt && p.dueAt <= now)));
+      const due = rows.filter(({ p }) => p.dueAt && p.dueAt <= now).length;
+      const wrong = rows.filter(({ p }) => p.wrong > 0).length;
+      const saved = rows.filter(({ p }) => p.bookmarked).length;
+      renderShell(`
+        <div class="grid">
+          <div class="grid three">
+            <div class="panel metric"><strong>${due}</strong><span>Due now</span></div>
+            <div class="panel metric"><strong>${wrong}</strong><span>Mistake notebook</span></div>
+            <div class="panel metric"><strong>${saved}</strong><span>Bookmarked</span></div>
+          </div>
+          <section class="panel pad">
+            <div class="toolbar">
+              <h2 class="section-title">Revision Queue</h2>
+              <button class="btn primary" data-action="quick-mode" data-mode="due" ${due ? "" : "disabled"}>Start Due Review</button>
+            </div>
+            <div class="card-list">
+              ${rows.slice(0, 100).map(({ q, p }) => `
+                <article class="q-card">
+                  ${questionBadges(q)}
+                  <p>${escapeHtml(q.question)}</p>
+                  <div class="badges">
+                    ${p.wrong ? `<span class="badge red">${p.wrong} wrong</span>` : ""}
+                    ${p.bookmarked ? `<span class="badge green">Bookmarked</span>` : ""}
+                    ${p.dueAt && p.dueAt <= now ? `<span class="badge amber">Due</span>` : ""}
+                  </div>
+                  <div class="toolbar">
+                    <span class="muted small">Last confidence: ${escapeHtml(p.lastConfidence || "n/a")}</span>
+                    <button class="btn" data-action="single-question" data-id="${q.id}">Practice</button>
+                  </div>
+                </article>
+              `).join("") || `<div class="empty">No mistakes, bookmarks, or due reviews yet.</div>`}
+            </div>
+          </section>
+        </div>
+      `);
+    }
+
+    function renderSearch() {
+      const query = app.search.trim().toLowerCase();
+      const results = query.length < 2 ? [] : BANK.filter(q => {
+        const text = `${q.question} ${q.options.join(" ")} ${q.explanation} ${q.subject} ${q.chapter} ${q.subtopic}`.toLowerCase();
+        return text.includes(query);
+      }).slice(0, 100);
+      renderShell(`
+        <div class="grid">
+          <section class="panel pad search-box">
+            <h2 class="section-title">Search PYQs</h2>
+            <input value="${escapeHtml(app.search)}" data-action="search-input" placeholder="Search ECG, ARDS, cricothyroid, drug name...">
+          </section>
+          <section class="panel pad">
+            <div class="toolbar">
+              <h2 class="section-title">Results</h2>
+              <span class="badge blue">${query.length < 2 ? 0 : results.length} shown</span>
+            </div>
+            <div class="card-list">
+              ${query.length < 2 ? `<div class="empty">Type at least two characters.</div>` : results.map(q => renderQuestionCard(q)).join("") || `<div class="empty">No matches.</div>`}
+            </div>
+          </section>
+        </div>
+      `);
+      const input = document.querySelector("[data-action='search-input']");
+      if (input) input.focus();
+    }
+
+    function singleQuestion(id) {
+      const q = byId.get(id);
+      if (!q) return;
+      app.session = {
+        ids: [id],
+        index: 0,
+        mode: "practice",
+        startedAt: Date.now(),
+        currentStarted: Date.now(),
+        answers: {},
+        finished: false
+      };
+      app.view = "quiz";
+      render();
+    }
+
+    function render() {
+      if (timerHandle) {
+        clearInterval(timerHandle);
+        timerHandle = null;
+      }
+      if (app.view === "dashboard") return renderDashboard();
+      if (app.view === "setup") return renderSetup();
+      if (app.view === "bank") return renderBank();
+      if (app.view === "quiz") return renderQuiz();
+      if (app.view === "result") return renderResult();
+      if (app.view === "review") return renderReview();
+      if (app.view === "search") return renderSearch();
+      renderDashboard();
+    }
+
+    document.addEventListener("click", event => {
+      const target = event.target.closest("[data-action]");
+      if (!target) return;
+      const action = target.dataset.action;
+      if (action === "set-view") setView(target.dataset.view);
+      if (action === "set-mode") setMode(target.dataset.mode);
+      if (action === "quick-mode") {
+        app.mode = target.dataset.mode;
+        app.view = "setup";
+        startQuiz();
+      }
+      if (action === "start-quiz") startQuiz();
+      if (action === "answer") selectOption(Number(target.dataset.index));
+      if (action === "confidence") setConfidence(target.dataset.value);
+      if (action === "jump") jumpTo(Number(target.dataset.index));
+      if (action === "prev") moveQuestion(-1);
+      if (action === "next") moveQuestion(1);
+      if (action === "clear-answer") clearAnswer();
+      if (action === "finish") finishQuiz();
+      if (action === "bookmark") toggleBookmark(target.dataset.id);
+      if (action === "single-question") singleQuestion(target.dataset.id);
+      if (action === "review-filter") {
+        app.reviewFilter = target.dataset.value;
+        render();
+      }
+    });
+
+    document.addEventListener("change", event => {
+      const filter = event.target.closest("[data-filter]");
+      if (filter) {
+        app.filters[filter.dataset.filter] = filter.value;
+        if (filter.dataset.filter === "subject") app.filters.chapter = "";
+        render();
+        return;
+      }
+      const count = event.target.closest("[data-action='count-select']");
+      if (count) {
+        app.count = Math.min(MAX_TEST_QUESTIONS, Number(count.value || 20));
+        render();
+      }
+    });
+
+    document.addEventListener("input", event => {
+      if (event.target.matches("[data-action='search-input']")) {
+        app.search = event.target.value;
+        renderSearch();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

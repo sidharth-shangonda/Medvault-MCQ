@@ -1,0 +1,40 @@
+{
+  "name": "medvault-pyq",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "nodemon server/src/index.js",
+    "server:start": "node server/src/index.js",
+    "start": "node server/src/index.js",
+    "start:file": "MONGODB_URI= node server/src/index.js",
+    "build": "vite build",
+    "client:dev": "vite --host 0.0.0.0 --port 5173",
+    "client:build": "vite build",
+    "client:preview": "vite preview --host 0.0.0.0",
+    "import:questions": "node server/src/scripts/importQuestions.js",
+    "validate:data": "node server/src/scripts/validateQuestionData.js"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.1",
+    "bcryptjs": "^3.0.3",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.17.0",
+    "mongoose": "^9.0.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router-dom": "^7.16.0",
+    "vite": "^7.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
