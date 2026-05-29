@@ -19,6 +19,6 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
-        value: 7d
+        value: 30d
       - key: QUESTION_JSON_PATH
         value: data/questions.json
