@@ -8,6 +8,7 @@ import { authRouter } from "./routes/auth.js";
 import { questionsRouter } from "./routes/questions.js";
 import { progressRouter } from "./routes/progress.js";
 import { imageAuditRouter } from "./routes/imageAudit.js";
+import { seedQuestionsIfNeeded } from "./repositories/seedRepository.js";
 
 const app = express();
 
@@ -43,6 +44,8 @@ app.use((err, _req, res, _next) => {
 
 try {
   await connectDatabase();
+  const seedResult = await seedQuestionsIfNeeded();
+  if (seedResult.imported) console.log(`Seeded ${seedResult.imported} questions into MongoDB.`);
   app.listen(config.port, () => {
     console.log(`MedVault API listening on http://localhost:${config.port} (${getDatabaseMode()} mode)`);
   });

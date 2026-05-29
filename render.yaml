@@ -5,7 +5,6 @@ services:
     plan: free
     region: singapore
     buildCommand: npm ci && npm run build
-    preDeployCommand: npm run import:questions
     startCommand: npm start
     healthCheckPath: /api/health
     autoDeployTrigger: commit
@@ -22,3 +21,5 @@ services:
         value: 30d
       - key: QUESTION_JSON_PATH
         value: data/questions.json
+      - key: AUTO_SEED_QUESTIONS
+        value: true

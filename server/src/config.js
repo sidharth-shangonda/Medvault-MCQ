@@ -15,6 +15,7 @@ export const config = {
   mongoServerSelectionTimeoutMs: Number(process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS || 30000),
   jwtSecret: process.env.JWT_SECRET || "dev-only-change-me",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "30d",
+  autoSeedQuestions: process.env.AUTO_SEED_QUESTIONS !== "false",
   questionJsonPath: path.resolve(rootDir, process.env.QUESTION_JSON_PATH || "data/questions.json"),
   mediaDir: path.resolve(rootDir, "assets/media")
 };
